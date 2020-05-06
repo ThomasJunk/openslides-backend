@@ -9,15 +9,12 @@ from openslides_backend.shared.patterns import Collection, FullQualifiedId
 PartialModel = Dict[str, Any]
 Found = TypedDict("Found", {"exists": bool, "position": int})
 Count = TypedDict("Count", {"count": int, "position": int})
-Aggregate = TypedDict("Aggregate", {"value": object, "position": int})
+Aggregate = Dict[str, Any]
 
 
 class Datastore(Protocol):
     """Datastore defines the interface to the datastore
     """
-
-    def getIds(self, collection: Collection, range: int) -> Tuple[int]:
-        ...
 
     def get(
         self, fqid: FullQualifiedId, mapped_fields: List[str] = None
@@ -31,7 +28,7 @@ class Datastore(Protocol):
 
     def getAll(
         self, collection: Collection, mapped_fields: List[str] = None
-    ) -> Tuple[object]:
+    ) -> List[PartialModel]:
         ...
 
     def filter(
@@ -49,11 +46,12 @@ class Datastore(Protocol):
     def count(self, collection: Collection, filter: Filter) -> Count:
         ...
 
-    def min(self, collection: Collection, filter: Filter, type: str) -> Aggregate:
+    def min(
+        self, collection: Collection, filter: Filter, field: str, type: str = None
+    ) -> Aggregate:
         ...
 
-    def max(self, collection: Collection, filter: Filter, type: str) -> Aggregate:
-        ...
-
-    def getId(self, collection: Collection) -> Tuple[int, int]:
+    def max(
+        self, collection: Collection, filter: Filter, field: str, type: str = None
+    ) -> Aggregate:
         ...
