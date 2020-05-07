@@ -1,9 +1,14 @@
-from typing import Any, Dict, List, Union
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List
 
-Filter = Union["And", "Or", "Not", "FilterOperator"]
+
+class Filter(ABC):
+    @abstractmethod
+    def to_dict(self) -> Dict[str, Any]:
+        ...
 
 
-class FilterOperator:
+class FilterOperator(Filter):
     def __init__(self, field: str, value: Any, operator: str) -> None:
         self.field = field
         self.value = value
@@ -13,25 +18,27 @@ class FilterOperator:
         return {"field": self.field, "value": self.value, "operator": self.operator}
 
 
-class And:
+class And(Filter):
     def __init__(self, value: List[Filter]) -> None:
         self.value = value
 
     def to_dict(self) -> Dict[str, Any]:
-        raise
+        filters = list(map(lambda x: x.to_dict(), self.value))
+        return {"and_filter": filters}
 
 
-class Or:
+class Or(Filter):
     def __init__(self, value: List[Filter]) -> None:
         self.value = value
 
     def to_dict(self) -> Dict[str, Any]:
-        raise
+        filters = list(map(lambda x: x.to_dict(), self.value))
+        return {"or_filter": filters}
 
 
-class Not:
+class Not(Filter):
     def __init__(self, value: Filter) -> None:
         self.value = value
 
     def to_dict(self) -> Dict[str, Any]:
-        raise
+        return {"not_filter": self.value.to_dict()}

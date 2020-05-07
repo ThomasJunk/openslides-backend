@@ -1,6 +1,7 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import openslides_backend.services.database.commands as commands
+from openslides_backend.services.database.adapter.interface import GetManyRequest
 from openslides_backend.services.database.engine import Engine
 from openslides_backend.shared.interfaces import Filter, LoggingModule
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
@@ -18,20 +19,31 @@ class Adapter:
         self.adapter = adapter
 
     def get(
-        self, fqid: FullQualifiedId, mapped_fields: List[str] = None
-    ) -> Tuple[PartialModel, int]:
+        self,
+        fqid: FullQualifiedId,
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> PartialModel:
         command = commands.Get(fqid=fqid, mappedFields=mapped_fields)
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
         response = self.adapter.get(command)
-        return (response, 0)
+        return response
 
     def getMany(
-        self, collection: Collection, ids: List[int], mapped_fields: List[str] = None
-    ) -> Dict[str, PartialModel]:
+        self,
+        get_many_requests: List[GetManyRequest],
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> Dict[str, Dict[int, PartialModel]]:
         command = commands.GetMany(
-            collection=collection, ids=ids, mapped_fields=mapped_fields
+            get_many_requests=get_many_requests,
+            mapped_fields=mapped_fields,
+            position=position,
+            get_deleted_models=get_deleted_models,
         )
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
@@ -39,8 +51,21 @@ class Adapter:
         response = self.adapter.getMany(command)
         return response
 
+    def getManyByFQIDs(
+        self, ids: List[FullQualifiedId],
+    ) -> Dict[str, Dict[int, PartialModel]]:
+        command = commands.GetManyByFQIDs(ids=ids,)
+        self.logger.debug(
+            f"Start request to database with the following data: {command.data}"
+        )
+        response = self.adapter.getMany(command)
+        return response
+
     def getAll(
-        self, collection: Collection, mapped_fields: List[str] = None
+        self,
+        collection: Collection,
+        mapped_fields: List[str] = None,
+        get_deleted_models: int = None,
     ) -> List[PartialModel]:
         command = commands.GetAll(collection=collection, mapped_fields=mapped_fields)
         self.logger.debug(
@@ -55,8 +80,13 @@ class Adapter:
         filter: Filter,
         meeting_id: int = None,
         mapped_fields: List[str] = None,
-    ) -> Tuple[Dict[int, PartialModel], int]:
-        raise
+    ) -> List[PartialModel]:
+        command = commands.Filters(collection=collection, filter=filter)
+        self.logger.debug(
+            f"Start request to database with the following data: {command.data}"
+        )
+        response = self.adapter.filter(command)
+        return response
 
     def exists(self, collection: Collection, filter: Filter) -> Found:
         command = commands.Exists(collection=collection, filter=filter)
@@ -75,7 +105,7 @@ class Adapter:
         return {"count": response["count"], "position": response["position"]}
 
     def min(
-        self, collection: Collection, filter: Filter, field: str, type: str
+        self, collection: Collection, filter: Filter, field: str, type: str = None
     ) -> Aggregate:
         command = commands.Min(
             collection=collection, filter=filter, field=field, type=type
@@ -87,7 +117,7 @@ class Adapter:
         return response
 
     def max(
-        self, collection: Collection, filter: Filter, field: str, type: str
+        self, collection: Collection, filter: Filter, field: str, type: str = None
     ) -> Aggregate:
         command = commands.Max(
             collection=collection, filter=filter, field=field, type=type

@@ -18,10 +18,13 @@ class Engine(Protocol):
     def getMany(self, data: Command) -> EngineResponse:
         ...
 
+    def getManyByFQIDs(self, data: Command) -> EngineResponse:
+        ...
+
     def getAll(self, data: Command) -> List[EngineResponse]:
         ...
 
-    def filter(self, data: Command) -> EngineResponse:
+    def filter(self, data: Command) -> List[EngineResponse]:
         ...
 
     def exists(self, data: Command) -> EngineResponse:

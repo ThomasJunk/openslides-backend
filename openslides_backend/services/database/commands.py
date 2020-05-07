@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional
 
+from openslides_backend.services.database.adapter.interface import GetManyRequest
 from openslides_backend.shared.interfaces import Filter
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
@@ -20,13 +21,28 @@ class Get(Command):
     """Get command
     """
 
-    def __init__(self, fqid: FullQualifiedId, mappedFields: Optional[List[str]]):
+    def __init__(
+        self,
+        fqid: FullQualifiedId,
+        mappedFields: Optional[List[str]],
+        position: int = None,
+        get_deleted_models: int = None,
+    ):
         self.fqid = fqid
         self.mappedFields = mappedFields
+        self.position = position
+        self.get_deleted_models = get_deleted_models
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {"fqid": self.fqid, "mapped_fields": self.mappedFields}
+        result: Dict[str, Any] = {}
+        result["fqid"] = self.fqid
+        result["mapped_fields"] = self.mappedFields
+        if self.position is not None:
+            result["position"] = self.position
+        if self.get_deleted_models is not None:
+            result["get_deleted_models"] = self.get_deleted_models
+        return result
 
 
 class GetMany(Command):
@@ -34,36 +50,68 @@ class GetMany(Command):
     """
 
     def __init__(
-        self, collection: Collection, mapped_fields: Optional[List[str]], ids: List[int]
+        self,
+        get_many_requests: List[GetManyRequest],
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
     ):
-        self.collection = collection
+        self.get_many_requests = get_many_requests
         self.mapped_fields = mapped_fields
+        self.position = position
+        self.get_deleted_models = get_deleted_models
+
+    @property
+    def data(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {}
+        requests = list(map(lambda x: x.to_dict(), self.get_many_requests))
+        result["requests"] = requests
+        if self.mapped_fields is not None:
+            result["mapped_fields"] = self.mapped_fields
+        if self.position is not None:
+            result["position"] = self.position
+        if self.get_deleted_models is not None:
+            result["get_deleted_models"] = self.get_deleted_models
+        return result
+
+
+class GetManyByFQIDs(Command):
+    """GetMany command
+    """
+
+    def __init__(
+        self, ids: List[FullQualifiedId],
+    ):
         self.ids = ids
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {
-            "requests": [
-                {
-                    "collection": self.collection,
-                    "mapped_fields": self.mapped_fields,
-                    "ids": self.ids,
-                }
-            ]
-        }
+        fqids = list(map(lambda x: str(x), self.ids))
+        return {"requests": fqids}
 
 
 class GetAll(Command):
     """GetAll command
     """
 
-    def __init__(self, collection: Collection, mapped_fields: Optional[List[str]]):
+    def __init__(
+        self,
+        collection: Collection,
+        mapped_fields: List[str] = None,
+        get_deleted_models: int = None,
+    ):
         self.collection = collection
         self.mapped_fields = mapped_fields
+        self.get_deleted_models = get_deleted_models
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {"collection": self.collection, "mapped_fields": self.mapped_fields}
+        result: Dict[str, Any] = {}
+        result["collection"] = self.collection
+        result["mapped_fields"] = self.mapped_fields
+        if self.get_deleted_models is not None:
+            result["get_deleted_models"] = self.get_deleted_models
+        return result
 
 
 class Exists(Command):
@@ -97,7 +145,7 @@ class Min(Command):
     """
 
     def __init__(
-        self, collection: Collection, filter: Filter, field: str, type: Optional[str]
+        self, collection: Collection, filter: Filter, field: str, type: str = None
     ):
         self.collection = collection
         self.filter = filter
@@ -121,7 +169,7 @@ class Max(Command):
     """
 
     def __init__(
-        self, collection: Collection, filter: Filter, field: str, type: Optional[str]
+        self, collection: Collection, filter: Filter, field: str, type: str = None
     ):
         self.collection = collection
         self.filter = filter
@@ -138,3 +186,16 @@ class Max(Command):
         if self.type is not None:
             result["type"] = self.type
         return result
+
+
+class Filters(Command):
+    """Filter command
+    """
+
+    def __init__(self, collection: Collection, filter: Filter):
+        self.collection = collection
+        self.filter = filter
+
+    @property
+    def data(self) -> Dict[str, Any]:
+        return {"collection": self.collection, "filter": self.filter.to_dict()}

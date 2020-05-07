@@ -35,6 +35,10 @@ class HTTPEngine:
         command_url = f" {self.url}/get_many"  # noqa
         return self._retrieve(command_url, command)
 
+    def getManyByFQIDs(self, command: Command) -> EngineResponse:
+        command_url = f" {self.url}/get_many"  # noqa
+        return self._retrieve(command_url, command)
+
     def getAll(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/get_all"
         return self._retrieve(command_url, command)

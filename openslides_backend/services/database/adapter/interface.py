@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Tuple
+from enum import Enum
+from typing import Any, Dict, List
 
 from mypy_extensions import TypedDict
 from typing_extensions import Protocol
@@ -12,22 +13,63 @@ Count = TypedDict("Count", {"count": int, "position": int})
 Aggregate = Dict[str, Any]
 
 
+class DeletedModelsBehaviour(Enum):
+    NO_DELETED = 1
+    ONLY_DELETED = 2
+    ALL_MODELS = 3
+
+
+class GetManyRequest:
+    """Encapsulates a single GetManyRequests
+    """
+
+    def __init__(
+        self, collection: Collection, ids: List[int], mapped_fields: List[str] = None,
+    ):
+        self.collection = collection
+        self.ids = ids
+        self.mapped_fields = mapped_fields
+
+    def to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {}
+        result["collection"] = self.collection
+        if self.mapped_fields is not None:
+            result["mapped_fields"] = self.mapped_fields
+        return result
+
+
 class Datastore(Protocol):
     """Datastore defines the interface to the datastore
     """
 
     def get(
-        self, fqid: FullQualifiedId, mapped_fields: List[str] = None
-    ) -> Tuple[PartialModel, int]:
+        self,
+        fqid: FullQualifiedId,
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> PartialModel:
         ...
 
     def getMany(
-        self, collection: Collection, ids: List[int], mapped_fields: List[str] = None
-    ) -> Tuple[Dict[int, PartialModel], int]:
+        self,
+        get_many_requests: List[GetManyRequest],
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> Dict[str, Dict[int, PartialModel]]:
+        ...
+
+    def getManyByFQIDs(
+        self, ids: List[FullQualifiedId]
+    ) -> Dict[str, Dict[int, PartialModel]]:
         ...
 
     def getAll(
-        self, collection: Collection, mapped_fields: List[str] = None
+        self,
+        collection: Collection,
+        mapped_fields: List[str] = None,
+        get_deleted_models: int = None,
     ) -> List[PartialModel]:
         ...
 
@@ -37,7 +79,7 @@ class Datastore(Protocol):
         filter: Filter,
         meeting_id: int = None,
         mapped_fields: List[str] = None,
-    ) -> Tuple[Dict[int, PartialModel], int]:
+    ) -> List[PartialModel]:
         ...
 
     def exists(self, collection: Collection, filter: Filter) -> Found:
