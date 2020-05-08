@@ -18,7 +18,7 @@ def test_get() -> None:
     command = commands.Get(fqid=fqid, mappedFields=fields)
     engine.get.return_value = {"f": 1, "meta_deleted": False, "meta_position": 1}
     partial_model = db.get(fqid, fields)
-    assert command.data == {"fqid": fqid, "mapped_fields": fields}
+    assert command.data == {"fqid": str(fqid), "mapped_fields": fields}
     assert partial_model is not None
     engine.get.assert_called_with(command)
 
@@ -56,7 +56,7 @@ def test_getAll() -> None:
     command = commands.GetAll(collection=collection, mapped_fields=fields)
     engine.getAll.return_value = [{"f": 1, "meta_deleted": False, "meta_position": 1}]
     partial_models = db.getAll(collection=collection, mapped_fields=fields)
-    assert command.data == {"collection": collection, "mapped_fields": fields}
+    assert command.data == {"collection": str(collection), "mapped_fields": fields}
     assert partial_models is not None
     engine.getAll.assert_called_with(command)
 
@@ -77,7 +77,7 @@ def test_simple_filter() -> None:
     found = db.filter(collection=collection, filter=filter)
     assert found is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": {"field": field, "operator": operator, "value": value},
     }
     engine.filter.called_with(command)
@@ -98,7 +98,7 @@ def test_complex_filter() -> None:
     found = db.filter(collection=collection, filter=or_filter)
     assert found is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": or_filter.to_dict(),
     }
     engine.filter.called_with(command)
@@ -115,7 +115,7 @@ def test_exists() -> None:
     found = db.exists(collection=collection, filter=filter)
     assert found is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": {"field": field, "operator": operator, "value": value},
     }
     engine.exists.called_with(command)
@@ -132,7 +132,7 @@ def test_count() -> None:
     count = db.count(collection=collection, filter=filter)
     assert count is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": {"field": field, "operator": operator, "value": value},
     }
     engine.exists.called_with(command)
@@ -149,7 +149,7 @@ def test_min() -> None:
     agg = db.min(collection=collection, filter=filter, field=field)
     assert agg is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": {"field": field, "operator": operator, "value": value},
         "field": field,
     }
@@ -167,7 +167,7 @@ def test_max() -> None:
     agg = db.max(collection=collection, filter=filter, field=field)
     assert agg is not None
     assert command.data == {
-        "collection": collection,
+        "collection": str(collection),
         "filter": {"field": field, "operator": operator, "value": value},
         "field": field,
     }

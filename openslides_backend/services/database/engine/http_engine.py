@@ -18,11 +18,15 @@ class HTTPEngine:
 
     def _retrieve(self, command_url: str, command: Command) -> EngineResponse:
         payload = json.dumps(command.data)
-        response = requests.get(command_url, data=payload, headers=self.headers)
+        response = requests.post(command_url, data=payload, headers=self.headers)
         if not response.ok:
             if response.status_code >= 500:
                 raise DatabaseException("Connection to database failed.")
-        error = response.json().get("error")
+        error = None
+        try:
+            error = response.json().get("error")
+        except:  # noqa: E722
+            pass
         if error is not None:
             raise DatabaseException(error)
         return response.json()

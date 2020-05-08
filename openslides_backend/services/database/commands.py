@@ -36,7 +36,7 @@ class Get(Command):
     @property
     def data(self) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
-        result["fqid"] = self.fqid
+        result["fqid"] = str(self.fqid)
         result["mapped_fields"] = self.mappedFields
         if self.position is not None:
             result["position"] = self.position
@@ -107,7 +107,7 @@ class GetAll(Command):
     @property
     def data(self) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
-        result["collection"] = self.collection
+        result["collection"] = str(self.collection)
         result["mapped_fields"] = self.mapped_fields
         if self.get_deleted_models is not None:
             result["get_deleted_models"] = self.get_deleted_models
@@ -124,7 +124,7 @@ class Exists(Command):
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {"collection": self.collection, "filter": self.filter.to_dict()}
+        return {"collection": str(self.collection), "filter": self.filter.to_dict()}
 
 
 class Count(Command):
@@ -137,7 +137,7 @@ class Count(Command):
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {"collection": self.collection, "filter": self.filter.to_dict()}
+        return {"collection": str(self.collection), "filter": self.filter.to_dict()}
 
 
 class Min(Command):
@@ -155,7 +155,7 @@ class Min(Command):
     @property
     def data(self) -> Dict[str, Any]:
         result = {
-            "collection": self.collection,
+            "collection": str(self.collection),
             "filter": self.filter.to_dict(),
             "field": self.field,
         }
@@ -179,7 +179,7 @@ class Max(Command):
     @property
     def data(self) -> Dict[str, Any]:
         result = {
-            "collection": self.collection,
+            "collection": str(self.collection),
             "filter": self.filter.to_dict(),
             "field": self.field,
         }
@@ -198,4 +198,4 @@ class Filters(Command):
 
     @property
     def data(self) -> Dict[str, Any]:
-        return {"collection": self.collection, "filter": self.filter.to_dict()}
+        return {"collection": str(self.collection), "filter": self.filter.to_dict()}

@@ -32,7 +32,9 @@ class GetManyRequest:
 
     def to_dict(self) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
-        result["collection"] = self.collection
+        result["collection"] = str(self.collection)
+        if self.ids is not None:
+            result["ids"] = self.ids
         if self.mapped_fields is not None:
             result["mapped_fields"] = self.mapped_fields
         return result
