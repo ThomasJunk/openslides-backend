@@ -26,13 +26,12 @@ class AgendaItem(Model):
     )
     comment = fields.TextField(description="A comment on this agenda item.")
 
-    # closed = fields.BooleanField()
-    # type = number;
-    # is_internal: boolean;
-    # is_hidden: boolean;
-    # duration: number; // in seconds
-    # weight: number;
-    # level: number; // calculated.
-    # parent_id: agenda_item/child_ids;
-    # current_projector_ids: (projector/current_element_ids)[]
-    # projection_ids: (projection/element_id)[];
+    # closed
+    # comment
+    # content_object
+    # content_type
+    # duration
+    # objects
+    # parent
+    # type
+    # weight

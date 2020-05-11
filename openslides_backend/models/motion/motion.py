@@ -1,6 +1,6 @@
-from ..shared.patterns import Collection
-from . import fields
-from .base import Model
+from openslides_backend.models import fields
+from openslides_backend.models.base import Model
+from openslides_backend.shared.patterns import Collection
 
 
 class Motion(Model):
