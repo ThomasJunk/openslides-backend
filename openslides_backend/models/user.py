@@ -18,4 +18,20 @@ class User(Model):
 
     id = fields.IdField(description="The id of this user.")
 
-    # TODO: Add all fields.
+    # about_me
+    # auth_type
+    # comment
+    # default_password
+    # email
+    # first_name
+    # gender
+    # is_active
+    # is_commitee
+    # is_present
+    # last_email_send
+    # last_name
+    # number
+    # objects
+    # title
+    # username
+    # vote_weight
