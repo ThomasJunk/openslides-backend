@@ -3,11 +3,8 @@ from typing import Dict, List
 import openslides_backend.services.datastore.commands as commands
 from openslides_backend.services.datastore.adapter.interface import GetManyRequest
 from openslides_backend.services.datastore.engine import Reader, Writer
-from openslides_backend.shared.interfaces import (
-    Filter,
-    LoggingModule,
-    WriteRequestElement,
-)
+from openslides_backend.shared.filters import Filter
+from openslides_backend.shared.interfaces import LoggingModule, WriteRequestElement
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 from .interface import Aggregate, Count, Found, PartialModel

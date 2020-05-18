@@ -1,2 +1,2 @@
-from .adapter import Adapter  # noqa
+from .adapter import Adapter, Datastore  # noqa
 from .engine import HTTPReader, HTTPWriter  # noqa

@@ -4,7 +4,8 @@ from typing import Any, Dict, List
 from mypy_extensions import TypedDict
 from typing_extensions import Protocol
 
-from openslides_backend.shared.interfaces import Filter, WriteRequestElement
+from openslides_backend.shared.filters import Filter
+from openslides_backend.shared.interfaces import WriteRequestElement
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 PartialModel = Dict[str, Any]

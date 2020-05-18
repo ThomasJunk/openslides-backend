@@ -3,10 +3,12 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 from fastjsonschema import JsonSchemaException  # type: ignore
 from mypy_extensions import TypedDict
 
+from openslides_backend.services.datastore import Datastore
+
 from ..models.base import Model
 from ..models.fields import RelationMixin
 from ..shared.exceptions import ActionException
-from ..shared.interfaces import Database, Event, Permission, WriteRequestElement
+from ..shared.interfaces import Event, Permission, WriteRequestElement
 from ..shared.patterns import FullQualifiedId
 from .actions_interface import ActionPayload
 from .relations import Relations, RelationsHandler
@@ -20,7 +22,7 @@ class BaseAction:  # pragma: no cover
     """
 
     permission: Permission
-    datastore: Database
+    datastore: Datastore
     user_id: int
     position: int
 
@@ -39,7 +41,7 @@ class Action(BaseAction):
 
     position = 0
 
-    def __init__(self, permission: Permission, datastore: Database) -> None:
+    def __init__(self, permission: Permission, datastore: Datastore) -> None:
         self.permission = permission
         self.datastore = datastore
 
@@ -91,8 +93,7 @@ class Action(BaseAction):
         self, dataset: DataSet
     ) -> Iterable[WriteRequestElement]:
         """
-        Takes dataset and creates write request elements that can be sent to event
-        store.
+        Takes dataset and creates write request elements that can be sent to datastore.
 
         By default it calls self.create_element_write_request_element and uses
         get_relations_updates() for relations.
