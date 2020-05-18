@@ -29,7 +29,7 @@ class PermissionDenied(BackendBaseException):
     pass
 
 
-class DatabaseException(BackendBaseException):
+class DatastoreException(BackendBaseException):
     pass
 
 

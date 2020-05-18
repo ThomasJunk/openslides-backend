@@ -50,7 +50,7 @@ class Services(Protocol):  # pragma: no cover
     #       services seems difficult for mypy.
     authentication: Any
     permission: Any
-    database: Any
+    datastore: Any
     event_store: Any
 
 
@@ -122,7 +122,7 @@ class Permission(Protocol):  # pragma: no cover
 
 class Database(Protocol):  # pragma: no cover
     """
-    Interface for database adapter used in views and actions.
+    Interface for datastore adapter used in views and actions.
     """
 
     def get(

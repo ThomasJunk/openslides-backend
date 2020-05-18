@@ -103,7 +103,7 @@ class ActionsHandler(HandlerBase):
         # Parse actions and creates events
         write_request_elements = self.parse_actions(payload)
 
-        # Send events to database
+        # Send events to datastore
         try:
             self.services.event_store().send(write_request_elements)
         except EventStoreException as exception:
@@ -139,9 +139,9 @@ class ActionsHandler(HandlerBase):
             if action is None:
                 raise ActionException(f"Action {element['action']} does not exist.")
             self.logger.debug(f"Perform action {element['action']}.")
-            write_request_elements = action(self.permission(), self.database()).perform(
-                element["data"], self.user_id
-            )
+            write_request_elements = action(
+                self.permission(), self.datastore()
+            ).perform(element["data"], self.user_id)
             self.logger.debug(
                 f"Prepared write request element {write_request_elements}."
             )

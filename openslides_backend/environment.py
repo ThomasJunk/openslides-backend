@@ -33,20 +33,20 @@ def get_environment() -> Environment:
         "OPENSLIDES_BACKEND_PERMISSION_URL",
         get_fallback_url(DEFAULT_HOST, DEFAULT_PERMISSION_PORT),
     )
-    database_read_url = get_url_from_env(
-        "OPENSLIDES_BACKEND_DATABASE_READ_URL",
+    datastore_read_url = get_url_from_env(
+        "OPENSLIDES_BACKEND_DATASTORE_READ_URL",
         get_fallback_url(DEFAULT_HOST, DEFAULT_DATABASE_READ_PORT),
     )
-    database_write_url = get_url_from_env(
-        "OPENSLIDES_BACKEND__DATABASE_READ_URL",
+    datastore_write_url = get_url_from_env(
+        "OPENSLIDES_BACKEND__DATASTORE_WRITE_URL",
         get_fallback_url(DEFAULT_HOST, DEFAULT_DATABASE_WRITE_PORT),
     )
 
     return Environment(
         authentication_url=authentication_url,
         permission_url=permission_url,
-        datastore_read_url=database_read_url,
-        datastore_write_url=database_write_url,
+        datastore_read_url=datastore_read_url,
+        datastore_write_url=datastore_write_url,
     )
 
 

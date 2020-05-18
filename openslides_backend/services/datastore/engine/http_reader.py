@@ -1,7 +1,7 @@
 import requests
 import simplejson as json
 
-from openslides_backend.shared.exceptions import DatabaseException
+from openslides_backend.shared.exceptions import DatastoreException
 from openslides_backend.shared.interfaces import LoggingModule
 
 from .interface import Command, EngineResponse
@@ -12,9 +12,9 @@ class HTTPReader:
     HTTP implementation of the Engine interface
     """
 
-    def __init__(self, database_url: str, logging: LoggingModule):
+    def __init__(self, datastore_url: str, logging: LoggingModule):
         self.logger = logging.getLogger(__name__)
-        self.url = database_url
+        self.url = datastore_url
         self.headers = {"Content-Type": "application/json"}
 
     def _execute(self, command_url: str, command: Command) -> EngineResponse:
@@ -22,14 +22,14 @@ class HTTPReader:
         response = requests.post(command_url, data=payload, headers=self.headers)
         if not response.ok:
             if response.status_code >= 500:
-                raise DatabaseException("Connection to database failed.")
+                raise DatastoreException("Connection to datastore failed.")
         error = None
         try:
             error = response.json().get("error")
         except:  # noqa: E722
             pass
         if error is not None:
-            raise DatabaseException(error)
+            raise DatastoreException(error)
         return response.json()
 
     def get(self, command: Command) -> EngineResponse:

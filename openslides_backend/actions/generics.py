@@ -69,7 +69,7 @@ class CreateAction(PermissionMixin, Action):
                     relation_fields.append((field_name, field, True))
 
             # Get new id.
-            id, position = self.database.getId(collection=self.model.collection)
+            id, position = self.datastore.getId(collection=self.model.collection)
             self.set_min_position(position)
 
             # Get relations.
@@ -123,7 +123,7 @@ class UpdateAction(PermissionMixin, Action):
         data = []
         for instance in payload:
             # Fetch current db instance with permission_reference field.
-            db_instance, position = self.database.get(
+            db_instance, position = self.datastore.get(
                 fqid=FullQualifiedId(self.model.collection, id=instance["id"]),
                 mapped_fields=[self.permission_reference],
             )
@@ -209,7 +209,7 @@ class DeleteAction(PermissionMixin, Action):
         data = []
         for instance in payload:
             # Fetch current db instance with permission_reference field
-            db_instance, position = self.database.get(
+            db_instance, position = self.datastore.get(
                 fqid=FullQualifiedId(self.model.collection, id=instance["id"]),
                 mapped_fields=[self.permission_reference],
             )

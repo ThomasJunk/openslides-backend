@@ -20,7 +20,7 @@ class BaseAction:  # pragma: no cover
     """
 
     permission: Permission
-    database: Database
+    datastore: Database
     user_id: int
     position: int
 
@@ -39,9 +39,9 @@ class Action(BaseAction):
 
     position = 0
 
-    def __init__(self, permission: Permission, database: Database) -> None:
+    def __init__(self, permission: Permission, datastore: Database) -> None:
         self.permission = permission
-        self.database = database
+        self.datastore = datastore
 
     def perform(
         self, payload: ActionPayload, user_id: int
@@ -66,7 +66,7 @@ class Action(BaseAction):
 
     def prepare_dataset(self, payload: ActionPayload) -> DataSet:
         """
-        Prepares dataset from payload. Also fires all necessary database
+        Prepares dataset from payload. Also fires all necessary datastore
         queries.
         """
         raise NotImplementedError
@@ -170,7 +170,7 @@ class Action(BaseAction):
         relations: Relations = {}
         for field_name, field, is_reverse in relation_fields:
             handler = RelationsHandler(
-                self.database,
+                self.datastore,
                 self.set_min_position,
                 model,
                 id,

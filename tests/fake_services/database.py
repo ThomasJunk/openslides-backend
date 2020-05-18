@@ -180,7 +180,7 @@ TESTDATA = [
 
 class DatabaseTestAdapter:
     """
-    Test adapter for database (read) queries.
+    Test adapter for datastore (read) queries.
 
     See openslides_backend.adapters.protocols.DatabaseProvider for
     implementation.

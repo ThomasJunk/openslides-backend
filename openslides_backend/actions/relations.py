@@ -35,7 +35,7 @@ class RelationsHandler:
 
     def __init__(
         self,
-        database: Any,  # TODO: Use a database connection here.
+        datastore: Any,  # TODO: Use a datastore connection here.
         set_min_position: Any,  # TODO: See above.
         model: Model,
         id: int,
@@ -46,7 +46,7 @@ class RelationsHandler:
         only_add: bool = False,
         only_remove: bool = False,
     ) -> None:
-        self.database = database
+        self.datastore = datastore
         self.set_min_position = set_min_position
         self.model = model
         self.id = id
@@ -82,7 +82,7 @@ class RelationsHandler:
             add, remove = self.relation_diffs_fqid(rel_ids)
             rels = {}
             for related_model_fqid in list(add | remove):
-                related_model, position = self.database.get(
+                related_model, position = self.datastore.get(
                     related_model_fqid, mapped_fields=[related_name]
                 )
                 self.set_min_position(position)
@@ -90,7 +90,7 @@ class RelationsHandler:
         else:
             rel_ids = cast(List[int], rel_ids)
             add, remove = self.relation_diffs(rel_ids)
-            rels, position = self.database.getMany(
+            rels, position = self.datastore.getMany(
                 target, list(add | remove), mapped_fields=[related_name],
             )
             self.set_min_position(position)
@@ -124,14 +124,14 @@ class RelationsHandler:
             if self.is_reverse:
                 raise NotImplementedError
             # Fetch current db instance with structured_relation field.
-            db_instance, position = self.database.get(
+            db_instance, position = self.datastore.get(
                 fqid=FullQualifiedId(self.model.collection, id=self.id),
                 mapped_fields=[self.field.structured_relation],
             )
             self.set_min_position(position)
             if db_instance.get(self.field.structured_relation) is None:
                 raise ValueError(
-                    f"The field {self.field.structured_relation} must not be empty in database."
+                    f"The field {self.field.structured_relation} must not be empty in datastore."
                 )
             related_name = self.field.related_name.replace(
                 "$", str(db_instance.get(self.field.structured_relation))
@@ -155,10 +155,10 @@ class RelationsHandler:
         elif self.only_remove:
             raise NotImplementedError
         else:
-            # We have to compare with the current database state.
+            # We have to compare with the current datastore state.
 
-            # Retrieve current object from database
-            current_obj, position = self.database.get(
+            # Retrieve current object from datastore
+            current_obj, position = self.datastore.get(
                 FullQualifiedId(self.model.collection, self.id),
                 mapped_fields=[self.field_name],
             )
@@ -202,10 +202,10 @@ class RelationsHandler:
         elif self.only_remove:
             raise NotImplementedError
         else:
-            # We have to compare with the current database state.
+            # We have to compare with the current datastore state.
 
-            # Retrieve current object from database
-            current_obj, position = self.database.get(
+            # Retrieve current object from datastore
+            current_obj, position = self.datastore.get(
                 FullQualifiedId(self.model.collection, self.id),
                 mapped_fields=[self.field_name],
             )

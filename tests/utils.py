@@ -33,7 +33,7 @@ class FakeServices(containers.DeclarativeContainer):
     config = providers.Configuration("config")
     authentication = providers.Singleton(AuthenticationTestAdapter, config.user_id)
     permission = providers.Singleton(PermissionTestAdapter)
-    database = providers.Singleton(DatabaseTestAdapter)
+    datastore = providers.Singleton(DatabaseTestAdapter)
     event_store = providers.Singleton(EventStoreTestAdapter)
 
 

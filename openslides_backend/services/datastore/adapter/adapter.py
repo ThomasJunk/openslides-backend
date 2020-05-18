@@ -15,7 +15,7 @@ from .interface import Aggregate, Count, Found, PartialModel
 
 class Adapter:
     """
-    Adapter to connect to (read-only) database.
+    Adapter to connect to (read-only) datastore.
     """
 
     def __init__(self, reader: Reader, writer: Writer, logging: LoggingModule) -> None:
@@ -32,7 +32,7 @@ class Adapter:
     ) -> PartialModel:
         command = commands.Get(fqid=fqid, mappedFields=mapped_fields)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.get(command)
         return response
@@ -51,7 +51,7 @@ class Adapter:
             get_deleted_models=get_deleted_models,
         )
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.getMany(command)
         return response
@@ -61,7 +61,7 @@ class Adapter:
     ) -> Dict[str, Dict[int, PartialModel]]:
         command = commands.GetManyByFQIDs(ids=ids,)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.getMany(command)
         return response
@@ -74,7 +74,7 @@ class Adapter:
     ) -> List[PartialModel]:
         command = commands.GetAll(collection=collection, mapped_fields=mapped_fields)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.getAll(command)
         return response
@@ -88,7 +88,7 @@ class Adapter:
     ) -> List[PartialModel]:
         command = commands.Filters(collection=collection, filter=filter)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.filter(command)
         return response
@@ -96,7 +96,7 @@ class Adapter:
     def exists(self, collection: Collection, filter: Filter) -> Found:
         command = commands.Exists(collection=collection, filter=filter)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.exists(command)
         return {"exists": response["exists"], "position": response["position"]}
@@ -104,7 +104,7 @@ class Adapter:
     def count(self, collection: Collection, filter: Filter) -> Count:
         command = commands.Count(collection=collection, filter=filter)
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.count(command)
         return {"count": response["count"], "position": response["position"]}
@@ -116,7 +116,7 @@ class Adapter:
             collection=collection, filter=filter, field=field, type=type
         )
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.min(command)
         return response
@@ -128,7 +128,7 @@ class Adapter:
             collection=collection, filter=filter, field=field, type=type
         )
         self.logger.debug(
-            f"Start request to database with the following data: {command.data}"
+            f"Start request to datastore with the following data: {command.data}"
         )
         response = self.reader.max(command)
         return response
@@ -136,14 +136,14 @@ class Adapter:
     def write(self, write_request: WriteRequestElement) -> None:
         command = commands.Write(write_request=write_request)
         self.logger.debug(
-            f"Start write-request to database with the following data: {command.data}"
+            f"Start write-request to datastore with the following data: {command.data}"
         )
         self.writer.write(command)
 
     def reserveIds(self, collection: Collection, number: int) -> List[int]:
         command = commands.ReserveIDs(collection=collection, number=number)
         self.logger.debug(
-            f"Start write-request to database with the following data: {command.data}"
+            f"Start write-request to datastore with the following data: {command.data}"
         )
         self.writer.reserveIds(command)
         return [1, 2, 3]

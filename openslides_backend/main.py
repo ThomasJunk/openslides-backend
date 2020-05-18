@@ -39,7 +39,7 @@ class OpenSlidesBackendServices(containers.DeclarativeContainer):
     writer = providers.Singleton(
         datastore.HTTPWriter, config.datastore_write_url, logging
     )
-    database = providers.Singleton(datastore.Adapter, reader, writer, logging)
+    datastore = providers.Singleton(datastore.Adapter, reader, writer, logging)
 
 
 class OpenSlidesBackendWSGI(containers.DeclarativeContainer):

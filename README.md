@@ -39,10 +39,10 @@ To start it run
 
   URL of permission service. Default: http://localhost:9001/
 
-* OPENSLIDES_BACKEND_DATABASE_URL
+* OPENSLIDES_BACKEND_DATASTORE_READ_URL
 
-  URL of database service. Default: http://localhost:9002/
+  URL of datastore. Default: http://localhost:9002/
 
-* OPENSLIDES_BACKEND_EVENT_STORE_URL
+* OPENSLIDES_BACKEND_DATASTORE_WRITE_URL
 
-  URL of event store service. Default: http://localhost:9003/
+  URL of datastore. Default: http://localhost:9003/
