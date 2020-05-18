@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from openslides_backend.services.database.adapter.interface import GetManyRequest
+from openslides_backend.services.datastore.adapter.interface import GetManyRequest
 from openslides_backend.shared.interfaces import Filter
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 

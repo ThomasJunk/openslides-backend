@@ -9,7 +9,7 @@ from typing import Any, Type
 from dependency_injector import containers, providers  # type: ignore
 from gunicorn.app.base import BaseApplication  # type: ignore
 
-import openslides_backend.services.database as database
+import openslides_backend.services.datastore as datastore
 
 from .environment import get_environment
 from .http.application import OpenSlidesBackendWSGIApplication
@@ -34,8 +34,8 @@ class OpenSlidesBackendServices(containers.DeclarativeContainer):
         AuthenticationHTTPAdapter, config.authentication_url, logging
     )
     permission = providers.Singleton(PermissionHTTPAdapter, config.permission_url)
-    engine = providers.Singleton(database.HTTPReader, config.database_url, logging)
-    database = providers.Singleton(database.Adapter, engine, logging)
+    engine = providers.Singleton(datastore.HTTPReader, config.database_url, logging)
+    database = providers.Singleton(datastore.Adapter, engine, logging)
     event_store = providers.Singleton(EventStoreHTTPAdapter, config.event_store_url)
 
 

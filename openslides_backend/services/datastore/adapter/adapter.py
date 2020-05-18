@@ -1,8 +1,8 @@
 from typing import Dict, List
 
-import openslides_backend.services.database.commands as commands
-from openslides_backend.services.database.adapter.interface import GetManyRequest
-from openslides_backend.services.database.engine import Reader
+import openslides_backend.services.datastore.commands as commands
+from openslides_backend.services.datastore.adapter.interface import GetManyRequest
+from openslides_backend.services.datastore.engine import Reader
 from openslides_backend.shared.interfaces import Filter, LoggingModule
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 

@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from typing_extensions import Protocol
 
-from openslides_backend.services.database.commands import Command
+from openslides_backend.services.datastore.commands import Command
 
 EngineResponse = Dict[str, Any]
 

@@ -3,14 +3,14 @@ from unittest.mock import Mock
 
 import pytest
 
-import openslides_backend.services.database as database
-from openslides_backend.services.database.adapter.interface import GetManyRequest
+import openslides_backend.services.datastore as datastore
+from openslides_backend.services.datastore.adapter.interface import GetManyRequest
 from openslides_backend.shared.filters import FilterOperator, Or
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 log = Mock()
-engine = database.HTTPReader("http://localhost:8001/internal/datastore/reader", log)
-db = database.Adapter(engine, log)
+engine = datastore.HTTPReader("http://localhost:8001/internal/datastore/reader", log)
+db = datastore.Adapter(engine, log)
 
 test_context = os.environ.get("TESTCONTEXT")
 
