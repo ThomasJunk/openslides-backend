@@ -8,8 +8,9 @@ EngineResponse = Dict[str, Any]
 
 
 class Reader(Protocol):
-    """Datastore defines the interface to the engine used by the datastore
-       This will be the HTTPReder per default
+    """
+    Datastore defines the interface to the engine used by the datastore
+    This will be the HTTPReder per default
     """
 
     def get(self, data: Command) -> EngineResponse:

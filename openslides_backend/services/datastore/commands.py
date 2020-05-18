@@ -6,7 +6,8 @@ from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 
 class Command:
-    """Command is the base class for commands used by the Engine interface
+    """
+    Command is the base class for commands used by the Engine interface
     """
 
     @property
@@ -18,7 +19,8 @@ class Command:
 
 
 class Get(Command):
-    """Get command
+    """
+    Get command
     """
 
     def __init__(
@@ -46,7 +48,8 @@ class Get(Command):
 
 
 class GetMany(Command):
-    """GetMany command
+    """
+    GetMany command
     """
 
     def __init__(
@@ -76,7 +79,8 @@ class GetMany(Command):
 
 
 class GetManyByFQIDs(Command):
-    """GetMany command
+    """
+    GetMany command
     """
 
     def __init__(
@@ -91,7 +95,8 @@ class GetManyByFQIDs(Command):
 
 
 class GetAll(Command):
-    """GetAll command
+    """
+    GetAll command
     """
 
     def __init__(
@@ -115,7 +120,8 @@ class GetAll(Command):
 
 
 class Exists(Command):
-    """Exists command
+    """
+    Exists command
     """
 
     def __init__(self, collection: Collection, filter: Filter):
@@ -128,7 +134,8 @@ class Exists(Command):
 
 
 class Count(Command):
-    """Count command
+    """
+    Count command
     """
 
     def __init__(self, collection: Collection, filter: Filter):
@@ -141,7 +148,8 @@ class Count(Command):
 
 
 class Min(Command):
-    """Min command
+    """
+    Min command
     """
 
     def __init__(
@@ -165,7 +173,8 @@ class Min(Command):
 
 
 class Max(Command):
-    """Max command
+    """
+    Max command
     """
 
     def __init__(
@@ -189,7 +198,8 @@ class Max(Command):
 
 
 class Filters(Command):
-    """Filter command
+    """
+    Filter command
     """
 
     def __init__(self, collection: Collection, filter: Filter):

@@ -8,7 +8,8 @@ from .interface import Command, EngineResponse
 
 
 class HTTPReader:
-    """HTTP implementation of the Engine interface
+    """
+    HTTP implementation of the Engine interface
     """
 
     def __init__(self, database_url: str, logging: LoggingModule):
