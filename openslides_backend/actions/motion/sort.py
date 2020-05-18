@@ -89,14 +89,16 @@ class TreeSortMixin(BaseAction):
         """
         # Get all item ids to verify, that the user send all ids.
         filter = FilterOperator(field="meeting_id", value=meeting_id, operator="==")
-        db_instances, position = self.datastore.filter(
+        db_instances = self.datastore.filter(  # noqa
             collection=self.model.collection,
             filter=filter,
             meeting_id=meeting_id,
             mapped_fields=[],
         )
-        self.set_min_position(position)
-        all_model_ids = set(db_instances.keys())
+        # Unclear what should be done here
+        # self.set_min_position(position)
+        # all_model_ids = set(db_instances.keys())
+        all_model_ids: Set[int] = set()
 
         # Setup initial node using a fake root node.
         fake_root: Dict[str, Any] = {"id": None, "children": []}

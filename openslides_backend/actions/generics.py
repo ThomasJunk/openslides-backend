@@ -125,11 +125,12 @@ class UpdateAction(PermissionMixin, Action):
         data = []
         for instance in payload:
             # Fetch current db instance with permission_reference field.
-            db_instance, position = self.datastore.get(
+            db_instance = self.datastore.get(
                 fqid=FullQualifiedId(self.model.collection, id=instance["id"]),
                 mapped_fields=[self.permission_reference],
             )
-            self.set_min_position(position)
+            position = int(db_instance.get("meta_position", 0))
+            self.set_min_position(position=position)
 
             # Check permission using permission_reference field.
             self.check_permission(db_instance[self.permission_reference])
@@ -211,10 +212,11 @@ class DeleteAction(PermissionMixin, Action):
         data = []
         for instance in payload:
             # Fetch current db instance with permission_reference field
-            db_instance, position = self.datastore.get(
+            db_instance = self.datastore.get(
                 fqid=FullQualifiedId(self.model.collection, id=instance["id"]),
                 mapped_fields=[self.permission_reference],
             )
+            position = int(db_instance.get("meta_position", 0))
             self.set_min_position(position)
 
             # Check permission using permission_reference field.
