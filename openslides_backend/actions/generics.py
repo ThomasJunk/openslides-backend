@@ -69,7 +69,9 @@ class CreateAction(PermissionMixin, Action):
                     relation_fields.append((field_name, field, True))
 
             # Get new id.
-            id, position = self.datastore.getId(collection=self.model.collection)
+            id, position = self.datastore.reserveIds(
+                collection=self.model.collection, number=1
+            )
             self.set_min_position(position)
 
             # Get relations.

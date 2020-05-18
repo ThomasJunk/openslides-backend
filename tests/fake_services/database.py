@@ -1,7 +1,15 @@
-from copy import deepcopy
-from typing import Any, Dict, List, Tuple
+# from copy import deepcopy
+from typing import Any, Dict, List
 
-from openslides_backend.shared.filters import Filter, FilterOperator
+from openslides_backend.services.datastore import (
+    Aggregate,
+    Count,
+    Found,
+    GetManyRequest,
+    PartialModel,
+)
+from openslides_backend.shared.filters import Filter
+from openslides_backend.shared.interfaces import WriteRequestElement
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 # Do not change order of this entries. Just append new ones.
@@ -186,46 +194,36 @@ class DatabaseTestAdapter:
     implementation.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        pass
-
     def get(
-        self, fqid: FullQualifiedId, mapped_fields: List[str] = None
-    ) -> Tuple[Dict[str, Any], int]:
-        result, position = self.getMany(fqid.collection, [fqid.id], mapped_fields)
-        return result[fqid.id], position
+        self,
+        fqid: FullQualifiedId,
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> PartialModel:
+        ...
 
     def getMany(
-        self, collection: Collection, ids: List[int], mapped_fields: List[str] = None
-    ) -> Tuple[Dict[int, Dict[str, Any]], int]:
-        result = {}
-        for data in deepcopy(TESTDATA):
-            if data["collection"] == str(collection) and data["id"] in ids:
-                element = {}
-                if mapped_fields is None:
-                    element = data["fields"]
-                else:
-                    for field in mapped_fields:
-                        if field in data["fields"].keys():
-                            element[field] = data["fields"][field]
-                result[data["id"]] = element
-        if len(ids) != len(result):
-            # Something was not found.
-            print(collection, ids, result)
-            raise RuntimeError
-        return (result, 1)
+        self,
+        get_many_requests: List[GetManyRequest],
+        mapped_fields: List[str] = None,
+        position: int = None,
+        get_deleted_models: int = None,
+    ) -> Dict[str, Dict[int, PartialModel]]:
+        ...
 
-    def getId(self, collection: Collection) -> Tuple[int, int]:
-        return (42, 1)
+    def getManyByFQIDs(
+        self, ids: List[FullQualifiedId]
+    ) -> Dict[str, Dict[int, PartialModel]]:
+        ...
 
-    def exists(self, collection: Collection, ids: List[int]) -> Tuple[bool, int]:
-        for id in ids:
-            for data in TESTDATA:
-                if data["id"] == id:
-                    break
-            else:
-                return (False, 1)
-        return (True, 1)
+    def getAll(
+        self,
+        collection: Collection,
+        mapped_fields: List[str] = None,
+        get_deleted_models: int = None,
+    ) -> List[PartialModel]:
+        ...
 
     def filter(
         self,
@@ -233,31 +231,27 @@ class DatabaseTestAdapter:
         filter: Filter,
         meeting_id: int = None,
         mapped_fields: List[str] = None,
-    ) -> Tuple[Dict[int, Dict[str, Any]], int]:
-        result = {}
-        for data in deepcopy(TESTDATA):
-            data_meeting_id = data["fields"].get("meeting_id")
-            if meeting_id is not None and (
-                data_meeting_id is None or data_meeting_id != meeting_id
-            ):
-                continue
-            if data["collection"] != str(collection):
-                continue
-            if not isinstance(filter, FilterOperator):
-                # TODO: Implement other filters
-                continue
-            if (
-                filter.operator == "=="
-                and data["fields"].get(filter.field) == filter.value
-            ):
-                element = {}
-                if mapped_fields is None:
-                    element = data["fields"]
-                else:
-                    for field in mapped_fields:
-                        if field in data["fields"].keys():
-                            element[field] = data["fields"][field]
-                result[data["id"]] = element
-                continue
-            # TODO: Implement other operators.
-        return (result, 1)
+    ) -> List[PartialModel]:
+        ...
+
+    def exists(self, collection: Collection, filter: Filter) -> Found:
+        ...
+
+    def count(self, collection: Collection, filter: Filter) -> Count:
+        ...
+
+    def min(
+        self, collection: Collection, filter: Filter, field: str, type: str = None
+    ) -> Aggregate:
+        ...
+
+    def max(
+        self, collection: Collection, filter: Filter, field: str, type: str = None
+    ) -> Aggregate:
+        ...
+
+    def write(self, write_request: WriteRequestElement) -> None:
+        ...
+
+    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+        ...
