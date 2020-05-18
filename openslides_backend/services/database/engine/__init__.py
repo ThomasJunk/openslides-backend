@@ -1,2 +1,2 @@
-from .http_engine import HTTPEngine  # noqa
-from .interface import Engine  # noqa
+from .http_reader import HTTPReader  # noqa
+from .interface import Reader  # noqa

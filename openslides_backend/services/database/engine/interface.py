@@ -7,9 +7,9 @@ from openslides_backend.services.database.commands import Command
 EngineResponse = Dict[str, Any]
 
 
-class Engine(Protocol):
+class Reader(Protocol):
     """Datastore defines the interface to the engine used by the datastore
-       This will be the HTTPEngine per default
+       This will be the HTTPReder per default
     """
 
     def get(self, data: Command) -> EngineResponse:

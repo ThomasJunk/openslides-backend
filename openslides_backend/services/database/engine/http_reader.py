@@ -7,7 +7,7 @@ from openslides_backend.shared.interfaces import LoggingModule
 from .interface import Command, EngineResponse
 
 
-class HTTPEngine:
+class HTTPReader:
     """HTTP implementation of the Engine interface
     """
 

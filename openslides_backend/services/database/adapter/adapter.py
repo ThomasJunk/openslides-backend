@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import openslides_backend.services.database.commands as commands
 from openslides_backend.services.database.adapter.interface import GetManyRequest
-from openslides_backend.services.database.engine import Engine
+from openslides_backend.services.database.engine import Reader
 from openslides_backend.shared.interfaces import Filter, LoggingModule
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
@@ -14,7 +14,7 @@ class Adapter:
     Adapter to connect to (read-only) database.
     """
 
-    def __init__(self, adapter: Engine, logging: LoggingModule) -> None:
+    def __init__(self, adapter: Reader, logging: LoggingModule) -> None:
         self.logger = logging.getLogger(__name__)
         self.adapter = adapter
 

@@ -9,7 +9,7 @@ from openslides_backend.shared.filters import FilterOperator, Or
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 log = Mock()
-engine = database.HTTPEngine("http://localhost:8001/internal/datastore/reader", log)
+engine = database.HTTPReader("http://localhost:8001/internal/datastore/reader", log)
 db = database.Adapter(engine, log)
 
 test_context = os.environ.get("TESTCONTEXT")
