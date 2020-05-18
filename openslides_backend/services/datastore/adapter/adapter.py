@@ -3,7 +3,11 @@ from typing import Dict, List
 import openslides_backend.services.datastore.commands as commands
 from openslides_backend.services.datastore.adapter.interface import GetManyRequest
 from openslides_backend.services.datastore.engine import Reader, Writer
-from openslides_backend.shared.interfaces import Filter, LoggingModule
+from openslides_backend.shared.interfaces import (
+    Filter,
+    LoggingModule,
+    WriteRequestElement,
+)
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 from .interface import Aggregate, Count, Found, PartialModel
@@ -128,3 +132,18 @@ class Adapter:
         )
         response = self.reader.max(command)
         return response
+
+    def write(self, write_request: WriteRequestElement) -> None:
+        command = commands.Write(write_request=write_request)
+        self.logger.debug(
+            f"Start write-request to database with the following data: {command.data}"
+        )
+        self.writer.write(command)
+
+    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+        command = commands.ReserveIDs(collection=collection, number=number)
+        self.logger.debug(
+            f"Start write-request to database with the following data: {command.data}"
+        )
+        self.writer.reserveIds(command)
+        return [1, 2, 3]

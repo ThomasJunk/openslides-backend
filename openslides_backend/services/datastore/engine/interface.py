@@ -3,7 +3,6 @@ from typing import Any, Dict, List
 from typing_extensions import Protocol
 
 from openslides_backend.services.datastore.commands import Command
-from openslides_backend.shared.patterns import Collection
 
 EngineResponse = Dict[str, Any]
 
@@ -50,8 +49,8 @@ class Writer(Protocol):
     Writer
     """
 
-    def write(self, data: object) -> None:
+    def write(self, data: Command) -> None:
         ...
 
-    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+    def reserveIds(self, data: Command) -> List[EngineResponse]:
         ...

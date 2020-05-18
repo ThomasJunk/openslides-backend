@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 from openslides_backend.services.datastore.adapter.interface import GetManyRequest
-from openslides_backend.shared.interfaces import Filter
+from openslides_backend.shared.interfaces import Filter, WriteRequestElement
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 
@@ -209,3 +209,30 @@ class Filters(Command):
     @property
     def data(self) -> Dict[str, Any]:
         return {"collection": str(self.collection), "filter": self.filter.to_dict()}
+
+
+class Write(Command):
+    """
+    Filter command
+    """
+
+    def __init__(self, write_request: WriteRequestElement):
+        self.write_request = write_request
+
+    @property
+    def data(self) -> Dict[str, Any]:
+        return {}
+
+
+class ReserveIDs(Command):
+    """
+    Filter command
+    """
+
+    def __init__(self, collection: Collection, number: int):
+        self.collection = collection
+        self.number = number
+
+    @property
+    def data(self) -> Dict[str, Any]:
+        return {}

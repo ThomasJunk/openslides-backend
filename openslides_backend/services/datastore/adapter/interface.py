@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from mypy_extensions import TypedDict
 from typing_extensions import Protocol
 
-from openslides_backend.shared.interfaces import Filter
+from openslides_backend.shared.interfaces import Filter, WriteRequestElement
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
 PartialModel = Dict[str, Any]
@@ -98,4 +98,10 @@ class Datastore(Protocol):
     def max(
         self, collection: Collection, filter: Filter, field: str, type: str = None
     ) -> Aggregate:
+        ...
+
+    def write(self, write_request: WriteRequestElement) -> None:
+        ...
+
+    def reserveIds(self, collection: Collection, number: int) -> List[int]:
         ...

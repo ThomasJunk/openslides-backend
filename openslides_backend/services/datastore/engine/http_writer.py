@@ -1,7 +1,12 @@
 from typing import List
 
+import requests
+import simplejson as json
+
+from openslides_backend.shared.exceptions import DatabaseException
 from openslides_backend.shared.interfaces import LoggingModule
-from openslides_backend.shared.patterns import Collection
+
+from .interface import Command, EngineResponse
 
 
 class HTTPWriter:
@@ -14,8 +19,13 @@ class HTTPWriter:
         self.url = database_url
         self.headers = {"Content-Type": "application/json"}
 
-    def write(self, data: object) -> None:
-        ...
+    def write(self, data: Command) -> None:
+        command_url = f" {self.url}/write"
+        payload = json.dumps(data.data)
+        response = requests.post(command_url, data=payload, headers=self.headers)
+        if not response.ok:
+            if response.status_code >= 500:
+                raise DatabaseException("Connection to database failed.")
 
-    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+    def reserveIds(self, data: Command) -> List[EngineResponse]:
         ...
