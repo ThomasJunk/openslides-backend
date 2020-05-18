@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import openslides_backend.services.datastore.commands as commands
 from openslides_backend.services.datastore.adapter.interface import GetManyRequest
-from openslides_backend.services.datastore.engine import Reader
+from openslides_backend.services.datastore.engine import Reader, Writer
 from openslides_backend.shared.interfaces import Filter, LoggingModule
 from openslides_backend.shared.patterns import Collection, FullQualifiedId
 
@@ -14,9 +14,10 @@ class Adapter:
     Adapter to connect to (read-only) database.
     """
 
-    def __init__(self, adapter: Reader, logging: LoggingModule) -> None:
+    def __init__(self, reader: Reader, writer: Writer, logging: LoggingModule) -> None:
         self.logger = logging.getLogger(__name__)
-        self.adapter = adapter
+        self.reader = reader
+        self.writer = writer
 
     def get(
         self,
@@ -29,7 +30,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.get(command)
+        response = self.reader.get(command)
         return response
 
     def getMany(
@@ -48,7 +49,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.getMany(command)
+        response = self.reader.getMany(command)
         return response
 
     def getManyByFQIDs(
@@ -58,7 +59,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.getMany(command)
+        response = self.reader.getMany(command)
         return response
 
     def getAll(
@@ -71,7 +72,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.getAll(command)
+        response = self.reader.getAll(command)
         return response
 
     def filter(
@@ -85,7 +86,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.filter(command)
+        response = self.reader.filter(command)
         return response
 
     def exists(self, collection: Collection, filter: Filter) -> Found:
@@ -93,7 +94,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.exists(command)
+        response = self.reader.exists(command)
         return {"exists": response["exists"], "position": response["position"]}
 
     def count(self, collection: Collection, filter: Filter) -> Count:
@@ -101,7 +102,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.count(command)
+        response = self.reader.count(command)
         return {"count": response["count"], "position": response["position"]}
 
     def min(
@@ -113,7 +114,7 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.min(command)
+        response = self.reader.min(command)
         return response
 
     def max(
@@ -125,5 +126,5 @@ class Adapter:
         self.logger.debug(
             f"Start request to database with the following data: {command.data}"
         )
-        response = self.adapter.max(command)
+        response = self.reader.max(command)
         return response

@@ -34,8 +34,9 @@ class OpenSlidesBackendServices(containers.DeclarativeContainer):
         AuthenticationHTTPAdapter, config.authentication_url, logging
     )
     permission = providers.Singleton(PermissionHTTPAdapter, config.permission_url)
-    engine = providers.Singleton(datastore.HTTPReader, config.database_url, logging)
-    database = providers.Singleton(datastore.Adapter, engine, logging)
+    reader = providers.Singleton(datastore.HTTPReader, config.database_url, logging)
+    writer = providers.Singleton(datastore.HTTPWriter, config.database_url, logging)
+    database = providers.Singleton(datastore.Adapter, reader, writer, logging)
     event_store = providers.Singleton(EventStoreHTTPAdapter, config.event_store_url)
 
 
