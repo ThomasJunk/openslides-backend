@@ -7,8 +7,8 @@ Environment = TypedDict(
     {
         "authentication_url": str,
         "permission_url": str,
-        "database_url": str,
-        "event_store_url": str,
+        "datastore_read_url": str,
+        "datastore_write_url": str,
     },
 )
 
@@ -16,8 +16,8 @@ DEFAULT_PROTOCOL = "http"
 DEFAULT_HOST = "localhost"
 DEFAULT_AUTHENTICATION_PORT = 9000
 DEFAULT_PERMISSION_PORT = 9001
-DEFAULT_DATABASE_PORT = 9002
-DEFAULT_EVENT_STORE_PORT = 9003
+DEFAULT_DATABASE_READ_PORT = 9002
+DEFAULT_DATABASE_WRITE_PORT = 9003
 
 
 def get_environment() -> Environment:
@@ -33,20 +33,20 @@ def get_environment() -> Environment:
         "OPENSLIDES_BACKEND_PERMISSION_URL",
         get_fallback_url(DEFAULT_HOST, DEFAULT_PERMISSION_PORT),
     )
-    database_url = get_url_from_env(
-        "OPENSLIDES_BACKEND_DATABASE_URL",
-        get_fallback_url(DEFAULT_HOST, DEFAULT_DATABASE_PORT),
+    database_read_url = get_url_from_env(
+        "OPENSLIDES_BACKEND_DATABASE_READ_URL",
+        get_fallback_url(DEFAULT_HOST, DEFAULT_DATABASE_READ_PORT),
     )
-    event_store_url = get_url_from_env(
-        "OPENSLIDES_BACKEND_EVENT_STORE_URL",
-        get_fallback_url(DEFAULT_HOST, DEFAULT_EVENT_STORE_PORT),
+    database_write_url = get_url_from_env(
+        "OPENSLIDES_BACKEND__DATABASE_READ_URL",
+        get_fallback_url(DEFAULT_HOST, DEFAULT_DATABASE_WRITE_PORT),
     )
 
     return Environment(
         authentication_url=authentication_url,
         permission_url=permission_url,
-        database_url=database_url,
-        event_store_url=event_store_url,
+        datastore_read_url=database_read_url,
+        datastore_write_url=database_write_url,
     )
 
 

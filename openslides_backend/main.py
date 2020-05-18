@@ -15,7 +15,6 @@ from .environment import get_environment
 from .http.application import OpenSlidesBackendWSGIApplication
 from .http.views import ActionsView, PresenterView
 from .services.authentication import AuthenticationHTTPAdapter
-from .services.event_store import EventStoreHTTPAdapter
 from .services.permission import PermissionHTTPAdapter
 from .shared.interfaces import View, WSGIApplication
 
@@ -34,10 +33,13 @@ class OpenSlidesBackendServices(containers.DeclarativeContainer):
         AuthenticationHTTPAdapter, config.authentication_url, logging
     )
     permission = providers.Singleton(PermissionHTTPAdapter, config.permission_url)
-    reader = providers.Singleton(datastore.HTTPReader, config.database_url, logging)
-    writer = providers.Singleton(datastore.HTTPWriter, config.database_url, logging)
+    reader = providers.Singleton(
+        datastore.HTTPReader, config.datastore_read_url, logging
+    )
+    writer = providers.Singleton(
+        datastore.HTTPWriter, config.datastore_write_url, logging
+    )
     database = providers.Singleton(datastore.Adapter, reader, writer, logging)
-    event_store = providers.Singleton(EventStoreHTTPAdapter, config.event_store_url)
 
 
 class OpenSlidesBackendWSGI(containers.DeclarativeContainer):
@@ -82,8 +84,8 @@ def create_wsgi_application(view_name: str) -> WSGIApplication:
         config={
             "authentication_url": environment["authentication_url"],
             "permission_url": environment["permission_url"],
-            "database_url": environment["database_url"],
-            "event_store_url": environment["event_store_url"],
+            "datastore_read_url": environment["datastore_read_url"],
+            "datastore_write_url": environment["datastore_write_url"],
         },
         logging=logging,
     )
