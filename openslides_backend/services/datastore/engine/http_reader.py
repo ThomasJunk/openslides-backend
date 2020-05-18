@@ -17,7 +17,7 @@ class HTTPReader:
         self.url = database_url
         self.headers = {"Content-Type": "application/json"}
 
-    def _retrieve(self, command_url: str, command: Command) -> EngineResponse:
+    def _execute(self, command_url: str, command: Command) -> EngineResponse:
         payload = json.dumps(command.data)
         response = requests.post(command_url, data=payload, headers=self.headers)
         if not response.ok:
@@ -34,36 +34,36 @@ class HTTPReader:
 
     def get(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/get"  # noqa
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def getMany(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/get_many"  # noqa
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def getManyByFQIDs(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/get_many"  # noqa
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def getAll(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/get_all"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def filter(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/filter"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def exists(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/exists"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def count(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/count"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def min(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/min"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
 
     def max(self, command: Command) -> EngineResponse:
         command_url = f" {self.url}/max"
-        return self._retrieve(command_url, command)
+        return self._execute(command_url, command)
