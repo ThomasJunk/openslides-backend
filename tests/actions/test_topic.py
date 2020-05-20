@@ -55,37 +55,30 @@ class TopicCreateActionUnitTester(BaseTopicCreateActionTester):
             5968705978  # This user has perm TOPIC_CAN_MANAGE for some meetings.
         )
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_empty(self) -> None:
         payload: ActionPayload = []
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_empty_2(self) -> None:
         payload: ActionPayload = [{}]
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_fuzzy(self) -> None:
         payload = [{"wrong_field": "text_Kiofee1ieV"}]
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_correct_1(self) -> None:
         self.action.validate(self.valid_payload_1)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_correct_2(self) -> None:
         self.action.validate(self.valid_payload_2)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_correct_3(self) -> None:
         self.action.validate(self.valid_payload_3)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_invalid_1(self) -> None:
         invalid_payload = [
             {
@@ -113,7 +106,7 @@ class TopicCreateActionUnitTester(BaseTopicCreateActionTester):
                 },
             }
         ]
-        self.assertEqual(dataset["position"], 1)
+        self.assertEqual(dataset["position"], 0)
         self.assertEqual(result, expected)
 
     @pytest.mark.skip(reason="no way of currently testing this")

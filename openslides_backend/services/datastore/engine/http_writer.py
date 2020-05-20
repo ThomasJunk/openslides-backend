@@ -1,5 +1,3 @@
-from typing import List
-
 import requests
 import simplejson as json
 
@@ -27,5 +25,5 @@ class HTTPWriter:
             if response.status_code >= 500:
                 raise DatastoreException("Connection to datastore failed.")
 
-    def reserveIds(self, data: Command) -> List[EngineResponse]:
+    def reserveIds(self, data: Command) -> EngineResponse:
         ...

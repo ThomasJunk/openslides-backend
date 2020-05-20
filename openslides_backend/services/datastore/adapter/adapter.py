@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import openslides_backend.services.datastore.commands as commands
 from openslides_backend.services.datastore.adapter.interface import GetManyRequest
@@ -137,10 +137,10 @@ class Adapter:
         )
         self.writer.write(command)
 
-    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+    def reserveIds(self, collection: Collection, number: int) -> Dict[str, Any]:
         command = commands.ReserveIDs(collection=collection, number=number)
         self.logger.debug(
             f"Start write-request to datastore with the following data: {command.data}"
         )
         self.writer.reserveIds(command)
-        return [1, 2, 3]
+        return {"ids": [1, 2, 3]}

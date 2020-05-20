@@ -2,6 +2,8 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Union, cast
 
 from mypy_extensions import TypedDict
 
+from openslides_backend.services.datastore.adapter.interface import GetManyRequest
+
 from ..models.base import Model
 from ..models.fields import RelationMixin
 from ..shared.exceptions import ActionException
@@ -82,19 +84,15 @@ class RelationsHandler:
             add, remove = self.relation_diffs_fqid(rel_ids)
             rels = {}
             for related_model_fqid in list(add | remove):
-                related_model, position = self.datastore.get(
+                related_model = self.datastore.get(
                     related_model_fqid, mapped_fields=[related_name]
                 )
-                self.set_min_position(position)
                 rels[related_model_fqid] = related_model
         else:
             rel_ids = cast(List[int], rel_ids)
             add, remove = self.relation_diffs(rel_ids)
-            rels, position = self.datastore.getMany(
-                target, list(add | remove), mapped_fields=[related_name],
-            )
-            self.set_min_position(position)
-
+            getMany = GetManyRequest(target, list(add | remove))
+            rels = self.datastore.getMany([getMany], mapped_fields=[related_name],)
         if self.field.generic_relation and not self.is_reverse:
             return self.prepare_result_to_fqid(add, remove, rels, target, related_name)
         return self.prepare_result_to_id(add, remove, rels, target, related_name)
@@ -248,13 +246,15 @@ class RelationsHandler:
         relations: Relations = {}
         for rel_id, rel in sorted(rels.items(), key=lambda item: str(item[0])):
             new_value: Optional[Union[int, List[int]]]
-            if rel_id in add:
+            collection, relation_id = rel_id.split("/")  # type:ignore
+            relation_id = int(relation_id)
+            if relation_id in add:
                 if self.field.type in ("1:1", "m:1"):
                     if rel.get(related_name) is None:
                         new_value = self.id
                     else:
                         raise ActionException(
-                            f"You can not add {rel_id} to field {self.field_name} "
+                            f"You can not add {relation_id} to field {self.field_name} "
                             "because related field is not empty."
                         )
                 else:
@@ -263,7 +263,7 @@ class RelationsHandler:
                     new_value = rel.get(related_name, []) + [value_to_be_added]
                 rel_element = RelationsElement(type="add", value=new_value)
             else:
-                assert rel_id in remove
+                assert relation_id in remove
                 if self.is_reverse and self.field.on_delete == "protect":
                     # Hint: There is no on_delete behavior in common relation
                     # case so the reverse field is always nullable.
@@ -281,11 +281,11 @@ class RelationsHandler:
                     assert isinstance(new_value, list)
                     new_value.remove(value_to_be_removed)
                 rel_element = RelationsElement(type="remove", value=new_value)
-            if isinstance(rel_id, int):
-                fqfield = FullQualifiedField(target, rel_id, related_name)
+            if isinstance(relation_id, int):
+                fqfield = FullQualifiedField(target, relation_id, related_name)
             else:
-                assert isinstance(rel_id, FullQualifiedId)
-                fqfield = FullQualifiedField(target, rel_id.id, related_name)
+                assert isinstance(relation_id, FullQualifiedId)
+                fqfield = FullQualifiedField(target, relation_id.id, related_name)
             relations[fqfield] = rel_element
         return relations
 
@@ -300,7 +300,9 @@ class RelationsHandler:
         relations: Relations = {}
         for rel_id, rel in sorted(rels.items(), key=lambda item: item[0]):
             new_value: Optional[Union[FullQualifiedId, List[FullQualifiedId]]]
-            if rel_id in add:
+            collection, relation_id = rel_id.split("/")  # type:ignore
+            relation_id = int(relation_id)
+            if relation_id in add:
                 if self.field.type in ("1:1", "m:1"):
                     if rel.get(related_name) is None:
                         new_value = FullQualifiedId(
@@ -308,7 +310,7 @@ class RelationsHandler:
                         )
                     else:
                         raise ActionException(
-                            f"You can not add {rel_id} to field {self.field_name} "
+                            f"You can not add {relation_id} to field {self.field_name} "
                             "because related field is not empty."
                         )
                 else:
@@ -319,7 +321,7 @@ class RelationsHandler:
                     new_value = rel.get(related_name, []) + [value_to_be_added]
                 rel_element = RelationsElement(type="add", value=new_value)
             else:
-                assert rel_id in remove
+                assert relation_id in remove
                 if self.is_reverse and self.field.on_delete == "protect":
                     # Hint: There is no on_delete behavior in common relation
                     # case so the reverse field is always nullable.
@@ -339,10 +341,10 @@ class RelationsHandler:
                     assert isinstance(new_value, list)
                     new_value.remove(value_to_be_removed)
                 rel_element = RelationsElement(type="remove", value=new_value)
-            if isinstance(rel_id, int):
-                fqfield = FullQualifiedField(target, rel_id, related_name)
+            if isinstance(relation_id, int):
+                fqfield = FullQualifiedField(target, relation_id, related_name)
             else:
-                assert isinstance(rel_id, FullQualifiedId)
-                fqfield = FullQualifiedField(target, rel_id.id, related_name)
+                assert isinstance(relation_id, FullQualifiedId)
+                fqfield = FullQualifiedField(target, relation_id.id, related_name)
             relations[fqfield] = rel_element
         return relations

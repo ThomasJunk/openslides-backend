@@ -52,5 +52,5 @@ class Writer(Protocol):
     def write(self, data: Command) -> None:
         ...
 
-    def reserveIds(self, data: Command) -> List[EngineResponse]:
+    def reserveIds(self, data: Command) -> EngineResponse:
         ...

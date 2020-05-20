@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Dict, List
 
 from ..shared.exceptions import ActionException, PermissionDenied
 from ..shared.interfaces import Event, WriteRequestElement
@@ -69,11 +69,10 @@ class CreateAction(PermissionMixin, Action):
                     relation_fields.append((field_name, field, True))
 
             # Get new id.
-            id, position = self.datastore.reserveIds(
+            ids: Dict[str, Any] = self.datastore.reserveIds(
                 collection=self.model.collection, number=1
             )
-            self.set_min_position(position)
-
+            id = ids["ids"][0]
             # Get relations.
             relations = self.get_relations(
                 model=self.model,

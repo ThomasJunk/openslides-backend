@@ -1,12 +1,14 @@
+from typing import Any, Dict, List
 from unittest import TestCase
+from unittest.mock import Mock
 
 import pytest  # type: ignore
 
 from openslides_backend.actions import ActionPayload
 from openslides_backend.actions.committee.create import CommitteeCreate
+from openslides_backend.services.datastore.adapter.interface import GetManyRequest
 from openslides_backend.shared.exceptions import ActionException, PermissionDenied
 
-from ..fake_services.database import DatabaseTestAdapter
 from ..fake_services.permission import PermissionTestAdapter
 from ..utils import (
     Client,
@@ -15,6 +17,8 @@ from ..utils import (
     get_fqfield,
     get_fqid,
 )
+
+db = Mock()
 
 
 class BaseCommitteeCreateActionTester(TestCase):
@@ -29,35 +33,49 @@ class BaseCommitteeCreateActionTester(TestCase):
 class CommitteeCreateActionUnitTester(BaseCommitteeCreateActionTester):
     def setUp(self) -> None:
         super().setUp()
-        self.action = CommitteeCreate(PermissionTestAdapter(), DatabaseTestAdapter())
+        self.action = CommitteeCreate(PermissionTestAdapter(), db)
         self.action.user_id = 7668157706  # This user has perm COMMITTEE_CAN_MANAGE.
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_empty(self) -> None:
         payload: ActionPayload = []
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_empty_2(self) -> None:
         payload: ActionPayload = [{}]
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_fuzzy(self) -> None:
         payload = [{"wrong_field": "text_daiKeesh9o"}]
         with self.assertRaises(ActionException):
             self.action.validate(payload)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_validation_correct_1(self) -> None:
         self.action.validate(self.valid_payload_1)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_prepare_dataset_1(self) -> None:
+        def getMany(
+            get_many_requests: List[GetManyRequest],
+            mapped_fields: List[str] = None,
+            position: int = None,
+            get_deleted_models: int = None,
+        ) -> Dict[str, Any]:
+            request = get_many_requests[0].to_dict()
+            if request["collection"] == "organisation" and request["ids"] == [1]:
+                return {
+                    "organisation/1": {
+                        "committee_ids": [5914213969, 7826715669],
+                        "meta_deleted": False,
+                        "meta_position": 1,
+                    }
+                }
+            return {}
+
+        db.reserveIds.return_value = {"ids": [42, 43, 44]}
+        db.getMany.side_effect = getMany
         dataset = self.action.prepare_dataset(self.valid_payload_1)
-        self.assertEqual(dataset["position"], 1)
+        self.assertEqual(dataset["position"], 0)
         self.assertEqual(
             dataset["data"],
             [
@@ -78,28 +96,24 @@ class CommitteeCreateActionUnitTester(BaseCommitteeCreateActionTester):
 class CommitteeCreateActionPerformTester(BaseCommitteeCreateActionTester):
     def setUp(self) -> None:
         super().setUp()
-        self.action = CommitteeCreate(PermissionTestAdapter(), DatabaseTestAdapter())
+        self.action = CommitteeCreate(PermissionTestAdapter(), db)
         self.user_id = 7668157706  # This user has perm COMMITTEE_CAN_MANAGE.
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_perform_empty(self) -> None:
         payload: ActionPayload = []
         with self.assertRaises(ActionException):
             self.action.perform(payload, user_id=self.user_id)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_perform_empty_2(self) -> None:
         payload: ActionPayload = [{}]
         with self.assertRaises(ActionException):
             self.action.perform(payload, user_id=self.user_id)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_perform_fuzzy(self) -> None:
         payload = [{"wrong_field": "text_dio0ahP6Oo"}]
         with self.assertRaises(ActionException):
             self.action.perform(payload, user_id=self.user_id)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_perform_correct_1(self) -> None:
         expected = [
             {
@@ -120,16 +134,16 @@ class CommitteeCreateActionPerformTester(BaseCommitteeCreateActionTester):
                     get_fqid("organisation/1"): ["Object attached to committee"],
                 },
                 "user_id": self.user_id,
-                "locked_fields": {get_fqfield("organisation/1/committee_ids"): 1},
+                "locked_fields": {get_fqfield("organisation/1/committee_ids"): 0},
             },
         ]
+        db.reserveIds.return_value = {"ids": [42, 43, 44]}
         write_request_elements = self.action.perform(
             self.valid_payload_1, user_id=self.user_id
         )
         result = list(write_request_elements)
         self.assertEqual(result, expected)
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_perform_no_permission_1(self) -> None:
         with self.assertRaises(PermissionDenied):
             self.action.perform(self.valid_payload_1, user_id=4796568680)
@@ -143,7 +157,6 @@ class CommitteeCreateActionWSGITester(BaseCommitteeCreateActionTester):
             user_id=self.user_id, view_name="ActionsView"
         )
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_wsgi_request_empty(self) -> None:
         client = Client(self.application, ResponseWrapper)
         response = client.post("/", json=[{"action": "committee.create", "data": [{}]}])
@@ -153,7 +166,6 @@ class CommitteeCreateActionWSGITester(BaseCommitteeCreateActionTester):
             str(response.data),
         )
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_wsgi_request_fuzzy(self) -> None:
         client = Client(self.application, ResponseWrapper)
         response = client.post(
@@ -188,7 +200,6 @@ class CommitteeCreateActionWSGITesterNoPermission(BaseCommitteeCreateActionTeste
             user_id=self.user_id_no_permission, view_name="ActionsView"
         )
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     def test_wsgi_request_no_permission_1(self) -> None:
         client = Client(self.application, ResponseWrapper)
         response = client.post(

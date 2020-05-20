@@ -104,5 +104,5 @@ class Datastore(Protocol):
     def write(self, write_request: WriteRequestElement) -> None:
         ...
 
-    def reserveIds(self, collection: Collection, number: int) -> List[int]:
+    def reserveIds(self, collection: Collection, number: int) -> Dict[str, Any]:
         ...
